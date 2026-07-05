@@ -16,12 +16,15 @@ export default function LoanView({ txns }: { txns: Transaction[] }) {
 
   const score = useMemo(() => scoreTransactions(txns), [txns]);
 
+  const amountNum = Number(amount);
+  const termNum = Number(term);
+  const amountValid = amountNum > 0;
+  const termValid = Number.isInteger(termNum) && termNum >= 1 && termNum <= 24;
+
   const assessment = useMemo(() => {
-    const a = Number(amount);
-    const tm = Number(term);
-    if (!(a > 0) || !Number.isInteger(tm) || tm < 1 || tm > 24) return null;
-    return assessLoan({ amount: a, termMonths: tm, monthlyRate: 0.02 }, score);
-  }, [amount, term, score]);
+    if (!amountValid || !termValid) return null;
+    return assessLoan({ amount: amountNum, termMonths: termNum, monthlyRate: 0.02 }, score);
+  }, [amountValid, termValid, amountNum, termNum, score]);
 
   return (
     <section className="max-w-2xl rounded-xl border border-slate-200/80 bg-white p-6">
@@ -36,8 +39,14 @@ export default function LoanView({ txns }: { txns: Transaction[] }) {
             min="1"
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
-            className="w-48 rounded-lg border border-slate-300 bg-slate-50/50 px-3 py-2.5 text-base focus:border-emerald-600 focus:bg-white focus:outline-none"
+            aria-invalid={!amountValid}
+            className={`w-48 rounded-lg border px-3 py-2.5 text-base focus:bg-white focus:outline-none ${
+              amountValid
+                ? 'border-slate-300 bg-slate-50/50 focus:border-emerald-600'
+                : 'border-red-400 bg-red-50/50 focus:border-red-500'
+            }`}
           />
+          {!amountValid && <p className="mt-1.5 w-48 text-xs text-red-600">{t.loan.invalidAmount}</p>}
         </label>
         <label className="text-sm">
           <span className="mb-1.5 block font-medium text-slate-600">{t.loan.term}</span>
@@ -47,8 +56,14 @@ export default function LoanView({ txns }: { txns: Transaction[] }) {
             max="24"
             value={term}
             onChange={(e) => setTerm(e.target.value)}
-            className="w-36 rounded-lg border border-slate-300 bg-slate-50/50 px-3 py-2.5 text-base focus:border-emerald-600 focus:bg-white focus:outline-none"
+            aria-invalid={!termValid}
+            className={`w-36 rounded-lg border px-3 py-2.5 text-base focus:bg-white focus:outline-none ${
+              termValid
+                ? 'border-slate-300 bg-slate-50/50 focus:border-emerald-600'
+                : 'border-red-400 bg-red-50/50 focus:border-red-500'
+            }`}
           />
+          {!termValid && <p className="mt-1.5 w-40 text-xs text-red-600">{t.loan.invalidTerm}</p>}
         </label>
       </div>
 

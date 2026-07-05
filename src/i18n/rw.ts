@@ -47,6 +47,8 @@ export const rw: Dict = {
       `, cyangwa ugumane ${rwf(amount)} wongera igihe kikagera ku mezi ${minTerm}.`,
     counterNoTerm: (amount: number) =>
       `; nta gihe kitarenze amezi 24 gituma ${rwf(amount)} yishyurwa.`,
+    invalidAmount: 'Andika umubare urenze 0.',
+    invalidTerm: "Igihe kigomba kuba umubare wuzuye hagati y'ukwezi 1 na 24.",
     reason: {
       farExceedsEvidence: 'Umubare usabwa urenze kure icyo ibigaragara mu mafaranga byemeza',
     },

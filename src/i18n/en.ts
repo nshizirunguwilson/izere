@@ -43,6 +43,8 @@ export const en = {
     counterKeepTerm: (amount: number, minTerm: number) =>
       `, or keep ${rwf(amount)} by extending the term to ${minTerm} months.`,
     counterNoTerm: (amount: number) => `; no term up to 24 months makes ${rwf(amount)} affordable.`,
+    invalidAmount: 'Enter an amount greater than 0.',
+    invalidTerm: 'The term must be a whole number between 1 and 24 months.',
     reason: {
       farExceedsEvidence: 'Requested amount far exceeds what the cashflow evidence supports',
     },
