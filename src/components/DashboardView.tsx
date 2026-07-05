@@ -12,6 +12,14 @@ import { HelpTip, TipHeading, TipMetricLabel } from './HelpTip';
 
 const fmt = (n: number) => `RWF ${Math.round(n).toLocaleString('en-US')}`;
 
+// Short form for tight spaces like chart column headers: 5.0M, 654k.
+const compactRwf = (n: number) =>
+  n >= 995_000
+    ? `${(n / 1_000_000).toFixed(1)}M`
+    : n >= 1_000
+      ? `${Math.round(n / 1_000)}k`
+      : `${Math.round(n)}`;
+
 const SUB_TIP_KEYS: Record<ScoreSubKey, 'subInflow' | 'subRegularity' | 'subBalanceFloor' | 'subVolatility' | 'subExpenseRatio'> = {
   inflow: 'subInflow',
   regularity: 'subRegularity',
@@ -81,6 +89,8 @@ export default function DashboardView({ txns }: { txns: Transaction[] }) {
 
   const display = stressedScore ?? score;
   const maxInflow = Math.max(...months.map((m) => m.revenue));
+  const manyMonths = months.length > 9;
+  const multiYear = new Set(months.map((m) => m.month.slice(0, 4))).size > 1;
 
   if (score.verdict === 'NOT_SCOREABLE') {
     return (
@@ -175,20 +185,23 @@ export default function DashboardView({ txns }: { txns: Transaction[] }) {
       <div className="grid gap-4 lg:grid-cols-[1.5fr_1fr] print:break-before-page">
         <Card>
           <TipHeading tip={t.tips.cashflowChart}>{t.dashboard.cashflow}</TipHeading>
-          <div className="mt-6 flex h-36 items-end gap-3">
+          <div className={`mt-6 flex h-36 items-end ${manyMonths ? 'gap-1' : 'gap-3'}`}>
             {months.map((m) => {
               const inflow = stressPct > 0 ? m.revenue * (1 - stressPct / 100) : m.revenue;
+              const label = formatMonth(m.month, t).split(' ')[0].slice(0, 3);
               return (
                 <div key={m.month} className="flex flex-1 flex-col items-center gap-1.5">
-                  <span className="text-[10px] text-slate-400 tabular-nums max-md:hidden">
-                    {fmt(inflow)}
+                  <span className="text-[10px] text-slate-400 tabular-nums">
+                    {compactRwf(inflow)}
                   </span>
                   <div
                     className="w-full max-w-14 rounded-md bg-emerald-600/85"
                     style={{ height: `${Math.max(6, (inflow / maxInflow) * 100)}px` }}
                   />
-                  <span className="text-xs text-slate-500">
-                    {formatMonth(m.month, t).split(' ')[0].slice(0, 3)}
+                  <span
+                    className={`whitespace-nowrap text-slate-500 ${manyMonths ? 'text-[10px]' : 'text-xs'}`}
+                  >
+                    {multiYear ? `${label} ${m.month.slice(2, 4)}` : label}
                   </span>
                 </div>
               );

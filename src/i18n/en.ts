@@ -73,6 +73,7 @@ export const en = {
     samples: {
       healthy: 'Healthy retail shop',
       seasonal: 'Seasonal trader',
+      established: 'Established business (15 months)',
       tampered: 'Tampered statement',
     },
   },
@@ -195,6 +196,11 @@ export const en = {
     sampleSeasonal: {
       title: 'Seasonal trader',
       body: 'A demo business with ups and downs across months. Use this to show a Review decision, not a hard decline.',
+    },
+    sampleEstablished: {
+      title: 'Established business',
+      body: 'A hardware shop with 15 months of history, steady growth and a rainy-season dip. Shows how the score looks with a long track record spanning two years.',
+      example: 'More months of evidence means the lender can trust the averages more.',
     },
     sampleTampered: {
       title: 'Tampered statement',

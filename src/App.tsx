@@ -24,6 +24,11 @@ import { useLang, type Lang, type TipKey } from './i18n';
 const SAMPLES = [
   { key: 'healthy' as const, file: 'sample_healthy.csv', tipKey: 'sampleHealthy' as const },
   { key: 'seasonal' as const, file: 'sample_seasonal.csv', tipKey: 'sampleSeasonal' as const },
+  {
+    key: 'established' as const,
+    file: 'sample_established.csv',
+    tipKey: 'sampleEstablished' as const,
+  },
   { key: 'tampered' as const, file: 'sample_tampered.csv', tipKey: 'sampleTampered' as const },
 ];
 

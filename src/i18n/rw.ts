@@ -75,6 +75,7 @@ export const rw: Dict = {
     samples: {
       healthy: 'Iduka rikora neza',
       seasonal: "Umucuruzi w'ibihe",
+      established: 'Ubucuruzi bumaze igihe (amezi 15)',
       tampered: 'Amakuru yahinduwe',
     },
   },
@@ -197,6 +198,11 @@ export const rw: Dict = {
     sampleSeasonal: {
       title: "Umucuruzi w'ibihe",
       body: "Urugero rw'ubucuruzi bufite amezi meza n'amezi mabi. Koresha ugaragaze icyemezo cyo gusuzuma, si ukwangirwa.",
+    },
+    sampleEstablished: {
+      title: 'Ubucuruzi bumaze igihe',
+      body: "Iduka ry'ibikoresho rifite amateka y'amezi 15, izamuka rihoraho n'igabanuka ry'igihe cy'imvura. Ryerekana uko amanota agaragara ku mateka maremare arenga imyaka ibiri.",
+      example: 'Amezi menshi bisobanura ko utanga inguzanyo yizera impuzandengo kurushaho.',
     },
     sampleTampered: {
       title: 'Amakuru yahinduwe',

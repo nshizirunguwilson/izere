@@ -32,6 +32,16 @@ describe('sample fixtures', () => {
     expect(result.score).toBeLessThanOrEqual(58);
   });
 
+  it('established sample covers 15 months and passes integrity', () => {
+    const txns = load('sample_established.csv');
+    expect(checkIntegrity(txns).valid).toBe(true);
+
+    const result = scoreTransactions(txns);
+    expect(result.verdict).toBe('APPROVE');
+    const months = new Set(txns.map((t) => t.date.toISOString().slice(0, 7)));
+    expect(months.size).toBe(15);
+  });
+
   it('tampered sample breaks integrity at rows 692 and 1379 only', () => {
     const report = checkIntegrity(load('sample_tampered.csv'));
     expect(report.valid).toBe(false);
