@@ -13,8 +13,9 @@ bank, MFI, or SACCO can act on.
 2. **Verifies integrity before anything else** — balance-chain arithmetic, duplicate
    transaction IDs, date order. A doctored statement is caught to the exact row and no
    score is issued (try the "Tampered statement" sample).
-3. **Builds the books** — monthly income, expenses, net, selling days, top customers.
-   Owner cash top-ups are never counted as revenue.
+3. **Builds the books** — monthly income, expenses, net, selling days, top customers,
+   and an interactive cash-flow chart (hover any month for its full numbers). Owner
+   cash top-ups are never counted as revenue.
 4. **Scores** — five explainable factors (inflow, regularity, balance floor, volatility,
    expense ratio) blended into a 0–100 score with plain-language reasons. Businesses with
    under 3 months of history are "not scoreable yet", never falsely declined.
@@ -41,12 +42,21 @@ npm run build   # production build
 | --- | --- |
 | `public/samples/sample_healthy.csv` | Kigali retail shop, 6 months → score 94, Approve |
 | `public/samples/sample_seasonal.csv` | Seasonal trader → Review (irregular income) |
+| `public/samples/sample_established.csv` | Hardware shop, 15 months across two years → long-track-record Approve |
 | `public/samples/sample_tampered.csv` | Edited statement → blocked with forensic row audit |
 
 ## Stack
 
-Vite + React + TypeScript + Tailwind CSS. Papaparse for CSV, Vitest for tests.
-Everything runs client-side; no data leaves the browser.
+Vite + React + TypeScript + Tailwind CSS. Papaparse for CSV, Chart.js for the
+cash-flow chart, Vitest for tests. Everything runs client-side; no data leaves
+the browser.
+
+## Docs
+
+[`IZERE_EXPLAINED.md`](IZERE_EXPLAINED.md) — every section of the app explained in
+simple English with worked examples: the integrity check, the five score factors,
+repayment capacity, the recommended limit, the stress test, and the loan-request
+math (including why the term is capped at 24 months).
 
 ## Honest notes for reviewers
 
