@@ -71,6 +71,9 @@ export default function LoanView({ txns }: { txns: Transaction[] }) {
             }`}
           />
           {!termValid && <p className="mt-1.5 w-40 text-xs text-red-600">{t.loan.invalidTerm}</p>}
+          {termValid && termNum >= 12 && (
+            <p className="mt-1.5 text-xs text-slate-500">{t.loan.termInYears(termNum)}</p>
+          )}
         </label>
       </div>
 

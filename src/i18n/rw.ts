@@ -50,6 +50,13 @@ export const rw: Dict = {
       `; nta gihe kitarenze amezi 24 gituma ${rwf(amount)} yishyurwa.`,
     invalidAmount: 'Andika umubare urenze 0.',
     invalidTerm: "Igihe kigomba kuba umubare wuzuye hagati y'ukwezi 1 na 24.",
+    termInYears: (months: number) => {
+      const y = Math.floor(months / 12);
+      const m = months % 12;
+      const years = y === 1 ? 'umwaka 1' : `imyaka ${y}`;
+      const rest = m === 1 ? 'ukwezi 1' : `amezi ${m}`;
+      return m === 0 ? `Ni ${years}.` : `Ni ${years} n'${rest}.`;
+    },
     reason: {
       farExceedsEvidence: 'Umubare usabwa urenze kure icyo ibigaragara mu mafaranga byemeza',
     },
@@ -253,8 +260,8 @@ export const rw: Dict = {
     },
     recommendedLimit: {
       title: 'Inguzanyo ntarengwa',
-      body: "Inguzanyo ntarengwa dutanga ukurikije amakuru, hafi ya 2.5× inyungu isigara ku kwezi (ibyinjira bikagabanyijwe ibisohoka).",
-      example: "Niba inyungu isigara RWF 400k ku kwezi, inguzanyo ≈ RWF 1M.",
+      body: "Inguzanyo yose hamwe ntarengwa dutanga: inyungu y'amezi 2.5. Inyungu ni ibyinjira ukuyemo ibisohoka. Inguzanyo ingana gutya, yishyurwa 30% by'inyungu buri kwezi, irangira mu mezi agera kuri 9 — biroroshye ku bucuruzi buto.",
+      example: 'Inyungu RWF 1,000,000 ku kwezi → ntarengwa 2.5 × 1,000,000 = RWF 2,500,000 yose hamwe.',
     },
     repaymentCapacity: {
       title: 'Ubushobozi bwo kwishyura',
@@ -306,8 +313,8 @@ export const rw: Dict = {
     },
     stressTest: {
       title: "Igerageza ry'ihungabana",
-      body: "Sukura ugaragaze ibyinjira bigabanutse. Amanota n'inguzanyo bihinduka ako kanya urebe niba bakomeza kwishyura.",
-      example: "Ku −20% by'ibyinjira, ubucuruzi bwa Birasuzumwa bushobora kugera ku Byanzwe.",
+      body: 'Kibaza kiti: byagenda bite ibicuruzwa bigabanutse ariko ibisohoka bigakomeza? Byose bibarwa bushya hamwe n\'ibyinjira bike kugira ngo urebe niba inguzanyo igikwiye mu gihe kibi.',
+      example: 'Ibyinjira RWF 5,000,000, ibisohoka RWF 4,000,000 → inyungu RWF 1,000,000. Ku −20%, ibyinjira biba 4,000,000, inyungu iba 0: nta nguzanyo ikwiye.',
     },
     notScoreable: {
       title: 'Ntibirapimwa',
@@ -350,8 +357,8 @@ export const rw: Dict = {
     },
     loanTerm: {
       title: "Igihe cy'inguzanyo",
-      body: "Amezi yo kwishyura. Igihe kirekire bisobanura ubwishyu buke buri kwezi.",
-      example: 'RWF 2M mu mezi 12 aho mu mezi 6 bigabanya ubwishyu buri kwezi.',
+      body: "Amezi yo kwishyura. Igihe kirekire bisobanura ubwishyu buke buri kwezi. Ntikirenza amezi 24 kuko amakuru ya MoMo yerekana amezi make gusa — ashobora gushyigikira inguzanyo ngufi y'igishoro, ntabwo ari iy'imyaka myinshi.",
+      example: 'RWF 2,000,000 mu mezi 12 aho mu mezi 6 bigabanya ubwishyu buri kwezi.',
     },
     loanVerdict: {
       title: 'Icyemezo cyo guhuza',

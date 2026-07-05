@@ -29,7 +29,9 @@ export const VERDICT_STYLE: Record<ScoreResult['verdict'], { chip: string; bar: 
 
 function Card({ children, className = '' }: { children: React.ReactNode; className?: string }) {
   return (
-    <section className={`rounded-xl border border-slate-200/80 bg-white p-5 ${className}`}>
+    <section
+      className={`rounded-xl border border-slate-200/80 bg-white p-5 print:break-inside-avoid ${className}`}
+    >
       {children}
     </section>
   );
@@ -107,7 +109,7 @@ export default function DashboardView({ txns }: { txns: Transaction[] }) {
 
   return (
     <div className="space-y-4">
-      <section className="overflow-hidden rounded-xl border border-slate-200/80 bg-white">
+      <section className="overflow-hidden rounded-xl border border-slate-200/80 bg-white print:break-inside-avoid">
         <div className={`h-1.5 ${VERDICT_STYLE[display.verdict].bar}`} />
         <div className="flex flex-wrap items-center gap-x-10 gap-y-4 p-6">
           <div>
@@ -170,7 +172,7 @@ export default function DashboardView({ txns }: { txns: Transaction[] }) {
         </Card>
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-[1.5fr_1fr]">
+      <div className="grid gap-4 lg:grid-cols-[1.5fr_1fr] print:break-before-page">
         <Card>
           <TipHeading tip={t.tips.cashflowChart}>{t.dashboard.cashflow}</TipHeading>
           <div className="mt-6 flex h-36 items-end gap-3">

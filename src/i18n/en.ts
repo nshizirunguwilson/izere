@@ -48,6 +48,13 @@ export const en = {
     counterNoTerm: (amount: number) => `; no term up to 24 months makes ${rwf(amount)} affordable.`,
     invalidAmount: 'Enter an amount greater than 0.',
     invalidTerm: 'The term must be a whole number between 1 and 24 months.',
+    termInYears: (months: number) => {
+      const y = Math.floor(months / 12);
+      const m = months % 12;
+      const years = y === 1 ? '1 year' : `${y} years`;
+      const rest = m === 1 ? '1 month' : `${m} months`;
+      return m === 0 ? `That is ${years}.` : `That is ${years} and ${rest}.`;
+    },
     reason: {
       farExceedsEvidence: 'Requested amount far exceeds what the cashflow evidence supports',
     },
@@ -251,8 +258,8 @@ export const en = {
     },
     recommendedLimit: {
       title: 'Recommended limit',
-      body: 'The largest loan amount we suggest from the statement, about 2.5× average monthly net inflow (money in minus spending).',
-      example: 'If the business keeps RWF 400k net per month on average, limit ≈ RWF 1M.',
+      body: 'The biggest total loan we suggest: 2.5 months of profit. Profit means money in minus money out. A loan this size, paid at 30% of profit per month, is fully repaid in about 9 months — comfortable for a small business.',
+      example: 'Profit RWF 1,000,000/month → limit 2.5 × 1,000,000 = RWF 2,500,000 total.',
     },
     repaymentCapacity: {
       title: 'Repayment capacity',
@@ -304,8 +311,8 @@ export const en = {
     },
     stressTest: {
       title: 'Stress test',
-      body: 'Slide to pretend revenue drops. The score and limits update live to show if the business could still repay.',
-      example: 'At −20% revenue, a Review business might move toward Decline.',
+      body: 'Asks: what if sales drop but costs stay the same? Everything is recalculated with lower sales so you can see if the loan still fits in a bad season.',
+      example: 'Sales RWF 5,000,000, costs RWF 4,000,000 → profit RWF 1,000,000. At −20%, sales fall to 4,000,000 and profit becomes 0: no loan fits.',
     },
     notScoreable: {
       title: 'Not scoreable yet',
@@ -348,8 +355,8 @@ export const en = {
     },
     loanTerm: {
       title: 'Loan term',
-      body: 'How many months to repay. Longer term means smaller monthly payments.',
-      example: 'RWF 2M over 12 months instead of 6 lowers each monthly installment.',
+      body: 'How many months to repay. Longer term means smaller monthly payments. Capped at 24 months because a MoMo statement shows a few months of history — it can support a short working-capital loan, not a multi-year commitment.',
+      example: 'RWF 2,000,000 over 12 months instead of 6 lowers each monthly installment.',
     },
     loanVerdict: {
       title: 'Fit verdict',
