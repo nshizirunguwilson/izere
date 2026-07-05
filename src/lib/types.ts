@@ -96,6 +96,8 @@ export interface LoanRequest {
   monthlyRate: number;
 }
 
+export type LoanReasonKey = 'farExceedsEvidence';
+
 export interface LoanAssessment {
   requestedPayment: number;
   capacity: number;
@@ -105,7 +107,7 @@ export interface LoanAssessment {
     maxAmountAtTerm: number;
     minTermForAmount: number | null;
   };
-  reasons: string[];
+  reasons: LoanReasonKey[];
 }
 
 export interface ScoreOptions {

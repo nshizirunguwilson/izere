@@ -15,7 +15,7 @@ const NEAR_ZERO_THRESHOLD = 10_000;
 const TRADING_DAYS_PER_MONTH = 26;
 // Illustrative benchmark for MSME monthly inflow; real model trains on outcomes in sandbox.
 const INFLOW_BENCHMARK = 5_800_000;
-const LIMIT_MULTIPLIER = 2.5;
+export const LIMIT_MULTIPLIER = 2.5;
 const REPAYMENT_CAP_RATIO = 0.3;
 
 const clamp = (x: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, x));
@@ -252,9 +252,9 @@ export function assessLoan(request: LoanRequest, scoreResult: ScoreResult): Loan
     }
   }
 
-  const reasons: string[] = [];
+  const reasons: LoanAssessment['reasons'] = [];
   if (A > 4 * scoreResult.recommendedLimit) {
-    reasons.push('requested amount far exceeds what the cashflow evidence supports');
+    reasons.push('farExceedsEvidence');
   }
 
   return {

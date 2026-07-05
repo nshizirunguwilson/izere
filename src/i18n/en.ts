@@ -6,6 +6,48 @@ const pct = (x: number) => `${Math.round(x * 100)}%`;
 export const en = {
   tagline: 'Mobile Money history → lender-ready credit decision',
 
+  nav: {
+    menu: 'Menu',
+    dashboard: 'Dashboard',
+    monthly: 'Monthly summary',
+    loan: 'Loan request',
+  },
+
+  shell: {
+    newStatement: 'New statement',
+    exportReport: 'Export report',
+  },
+
+  dashboard: {
+    scoreLabel: 'Credit score',
+    cashflow: 'Monthly cash flow',
+    whyTitle: 'Why this decision',
+  },
+
+  customers: {
+    title: 'Top customers',
+    payments: (n: number) => `${n} payments`,
+  },
+
+  loan: {
+    title: 'Loan request',
+    subtitle: 'Does the requested loan fit what the data supports? Simple interest at 2% per month.',
+    amount: 'Amount (RWF)',
+    term: 'Term (months, 1-24)',
+    verdicts: { MATCH: 'Fits', STRETCH: 'Stretch', MISMATCH: 'Does not fit' },
+    summary: (payment: number, capacity: number, ratioPct: string) =>
+      `Repayment ${rwf(payment)}/month against a safe capacity of ${rwf(capacity)}/month (${ratioPct} of capacity)`,
+    fits: 'This request fits the cashflow evidence. No counter-offer needed.',
+    counterOffer: (term: number, max: number) =>
+      `Counter-offer: at ${term} months the cashflow supports up to ${rwf(max)}`,
+    counterKeepTerm: (amount: number, minTerm: number) =>
+      `, or keep ${rwf(amount)} by extending the term to ${minTerm} months.`,
+    counterNoTerm: (amount: number) => `; no term up to 24 months makes ${rwf(amount)} affordable.`,
+    reason: {
+      farExceedsEvidence: 'Requested amount far exceeds what the cashflow evidence supports',
+    },
+  },
+
   upload: {
     drop: 'Drop a MoMo statement CSV here',
     columns: 'date, txn_id, type, counterparty, amount, fee, balance',
@@ -72,7 +114,13 @@ export const en = {
     showSummary: 'Show monthly summary',
     hideSummary: 'Hide monthly summary',
     monthlySummary: 'Monthly summary',
-    table: { month: 'Month', inflow: 'Inflow', expenses: 'Expenses', net: 'Net' },
+    table: {
+      month: 'Month',
+      inflow: 'Inflow',
+      expenses: 'Expenses',
+      net: 'Net',
+      sellingDays: 'Selling days',
+    },
     notScoreable: 'Not scoreable yet',
     notScoreableSub:
       'There is not enough history to score this business fairly. This is not a decline.',

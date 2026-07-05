@@ -9,6 +9,49 @@ const pct = (x: number) => `${Math.round(x * 100)}%`;
 export const rw: Dict = {
   tagline: "Amateka ya Mobile Money → icyemezo cy'inguzanyo cyizewe",
 
+  nav: {
+    menu: 'Urutonde',
+    dashboard: 'Ahabanza',
+    monthly: 'Incamake ya buri kwezi',
+    loan: 'Gusaba inguzanyo',
+  },
+
+  shell: {
+    newStatement: 'Tangira bushya',
+    exportReport: 'Sohora raporo',
+  },
+
+  dashboard: {
+    scoreLabel: "Amanota y'inguzanyo",
+    cashflow: "Imigendekere y'amafaranga",
+    whyTitle: "Impamvu z'iki cyemezo",
+  },
+
+  customers: {
+    title: 'Abakiriya ba mbere',
+    payments: (n: number) => `ubwishyu ${n}`,
+  },
+
+  loan: {
+    title: 'Gusaba inguzanyo',
+    subtitle: "Ese inguzanyo isabwa ihuye n'icyo amakuru yemeza? Inyungu ya 2% ku kwezi.",
+    amount: 'Umubare (RWF)',
+    term: 'Igihe (amezi, 1-24)',
+    verdicts: { MATCH: 'Birahuye', STRETCH: 'Birenzeho gake', MISMATCH: 'Ntibihuye' },
+    summary: (payment: number, capacity: number, ratioPct: string) =>
+      `Ubwishyu ${rwf(payment)} ku kwezi ugereranyije n'ubushobozi bwa ${rwf(capacity)} ku kwezi (${ratioPct} by'ubushobozi)`,
+    fits: "Iki cyifuzo gihuye n'ibigaragara mu mafaranga. Nta gitangwa gisimbura gikenewe.",
+    counterOffer: (term: number, max: number) =>
+      `Igitangwa gisimbura: mu mezi ${term}, amafaranga yemeza kugeza kuri ${rwf(max)}`,
+    counterKeepTerm: (amount: number, minTerm: number) =>
+      `, cyangwa ugumane ${rwf(amount)} wongera igihe kikagera ku mezi ${minTerm}.`,
+    counterNoTerm: (amount: number) =>
+      `; nta gihe kitarenze amezi 24 gituma ${rwf(amount)} yishyurwa.`,
+    reason: {
+      farExceedsEvidence: 'Umubare usabwa urenze kure icyo ibigaragara mu mafaranga byemeza',
+    },
+  },
+
   upload: {
     drop: "Shyira hano dosiye CSV y'amakuru ya MoMo",
     columns: 'date, txn_id, type, counterparty, amount, fee, balance',
@@ -75,7 +118,13 @@ export const rw: Dict = {
     showSummary: 'Erekana incamake ya buri kwezi',
     hideSummary: 'Hisha incamake ya buri kwezi',
     monthlySummary: 'Incamake ya buri kwezi',
-    table: { month: 'Ukwezi', inflow: 'Ibyinjira', expenses: 'Ibisohoka', net: 'Inyungu' },
+    table: {
+      month: 'Ukwezi',
+      inflow: 'Ibyinjira',
+      expenses: 'Ibisohoka',
+      net: 'Inyungu',
+      sellingDays: "Iminsi y'ubucuruzi",
+    },
     notScoreable: 'Ntibirapimwa',
     notScoreableSub:
       'Nta mateka ahagije yo gupima ubu bucuruzi mu buryo bukwiye. Ntabwo ari ukwangirwa.',
