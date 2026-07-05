@@ -38,6 +38,11 @@ export const en = {
     amount: 'Amount (RWF)',
     term: 'Term (months, 1-24)',
     verdicts: { MATCH: 'Fits', STRETCH: 'Stretch', MISMATCH: 'Does not fit' },
+    payTitle: 'What they will pay',
+    payMonthly: 'Monthly payment',
+    payInterest: 'Total interest',
+    payTotal: 'Total to repay',
+    payMonths: (n: number) => `over ${n} month${n === 1 ? '' : 's'}`,
     summary: (payment: number, capacity: number, ratioPct: string) =>
       `Repayment ${rwf(payment)}/month against a safe capacity of ${rwf(capacity)}/month (${ratioPct} of capacity)`,
     fits: 'This request fits the cashflow evidence. No counter-offer needed.',

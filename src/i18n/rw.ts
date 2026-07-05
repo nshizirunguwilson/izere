@@ -39,6 +39,11 @@ export const rw: Dict = {
     amount: 'Umubare (RWF)',
     term: 'Igihe (amezi, 1-24)',
     verdicts: { MATCH: 'Birahuye', STRETCH: 'Birenzeho gake', MISMATCH: 'Ntibihuye' },
+    payTitle: 'Icyo bazishyura',
+    payMonthly: 'Ubwishyu buri kwezi',
+    payInterest: 'Inyungu yose',
+    payTotal: 'Yose hamwe yishyurwa',
+    payMonths: (n: number) => (n === 1 ? 'mu kwezi 1' : `mu mezi ${n}`),
     summary: (payment: number, capacity: number, ratioPct: string) =>
       `Ubwishyu ${rwf(payment)} ku kwezi ugereranyije n'ubushobozi bwa ${rwf(capacity)} ku kwezi (${ratioPct} by'ubushobozi)`,
     fits: "Iki cyifuzo gihuye n'ibigaragara mu mafaranga. Nta gitangwa gisimbura gikenewe.",

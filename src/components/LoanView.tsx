@@ -1,5 +1,9 @@
 import { useMemo, useState } from 'react';
 import { assessLoan, scoreTransactions } from '../lib/engine';
+
+const fmt = (n: number) => `RWF ${Math.round(n).toLocaleString('en-US')}`;
+
+const MONTHLY_RATE = 0.02;
 import type { LoanAssessment, Transaction } from '../lib/types';
 import { useLang } from '../i18n';
 import { HelpTip, TipHeading } from './HelpTip';
@@ -24,8 +28,11 @@ export default function LoanView({ txns }: { txns: Transaction[] }) {
 
   const assessment = useMemo(() => {
     if (!amountValid || !termValid) return null;
-    return assessLoan({ amount: amountNum, termMonths: termNum, monthlyRate: 0.02 }, score);
+    return assessLoan({ amount: amountNum, termMonths: termNum, monthlyRate: MONTHLY_RATE }, score);
   }, [amountValid, termValid, amountNum, termNum, score]);
+
+  const totalInterest = amountNum * MONTHLY_RATE * termNum;
+  const totalToRepay = amountNum + totalInterest;
 
   return (
     <section className="max-w-2xl rounded-xl border border-slate-200/80 bg-white p-6">
@@ -78,7 +85,38 @@ export default function LoanView({ txns }: { txns: Transaction[] }) {
       </div>
 
       {assessment && (
-        <div className="mt-6 rounded-lg bg-slate-50 p-4">
+        <div className="mt-6 rounded-lg border border-slate-200/80 p-4">
+          <p className="text-xs font-semibold tracking-wide text-slate-500 uppercase">
+            {t.loan.payTitle}
+          </p>
+          <div className="mt-3 grid gap-4 sm:grid-cols-3">
+            <div>
+              <p className="text-xs text-slate-500">{t.loan.payMonthly}</p>
+              <p className="mt-0.5 text-xl font-extrabold tracking-tight tabular-nums">
+                {fmt(assessment.requestedPayment)}
+              </p>
+              <p className="text-xs text-slate-400">{t.loan.payMonths(termNum)}</p>
+            </div>
+            <div>
+              <p className="text-xs text-slate-500">
+                {t.loan.payInterest} (2% × {termNum})
+              </p>
+              <p className="mt-0.5 text-xl font-extrabold tracking-tight tabular-nums">
+                {fmt(totalInterest)}
+              </p>
+            </div>
+            <div>
+              <p className="text-xs text-slate-500">{t.loan.payTotal}</p>
+              <p className="mt-0.5 text-xl font-extrabold tracking-tight tabular-nums">
+                {fmt(totalToRepay)}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {assessment && (
+        <div className="mt-4 rounded-lg bg-slate-50 p-4">
           <div className="flex flex-wrap items-center gap-3">
             <span
               className={`inline-flex items-center gap-1 rounded-full px-3.5 py-1 text-sm font-bold ${LOAN_CHIP[assessment.verdict]}`}
