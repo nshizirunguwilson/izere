@@ -120,7 +120,6 @@ describe('not scoreable', () => {
       }
     }
     const result = scoreTransactions(makeTxns(rows));
-    expect(result.txnCount ?? rows.length).toBeDefined();
     expect(result.verdict).toBe('NOT_SCOREABLE');
   });
 });

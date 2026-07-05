@@ -3,6 +3,7 @@ import { FileUp, Landmark, Loader2, ShieldAlert, ShieldCheck } from 'lucide-reac
 import { parseCsv, ParseError } from './lib/parse';
 import { checkIntegrity } from './lib/integrity';
 import type { IntegrityReport, Transaction } from './lib/types';
+import Results from './components/Results';
 
 const SAMPLES = [
   { label: 'Healthy retail shop', file: 'sample_healthy.csv' },
@@ -77,7 +78,7 @@ export default function App() {
 
       <main className="mx-auto max-w-5xl px-6 py-10">
         <section
-          className={`rounded-2xl border-2 border-dashed bg-white p-10 text-center transition-colors ${
+          className={`rounded-2xl border-2 border-dashed bg-white p-10 text-center transition-colors print:hidden ${
             dragOver ? 'border-emerald-600 bg-emerald-50' : 'border-slate-300'
           }`}
           onDragOver={(e) => {
@@ -116,7 +117,7 @@ export default function App() {
           />
         </section>
 
-        <div className="mt-6 flex flex-wrap items-center gap-3">
+        <div className="mt-6 flex flex-wrap items-center gap-3 print:hidden">
           <span className="text-sm font-medium text-slate-500">Or load a sample:</span>
           {SAMPLES.map((s) => (
             <button
@@ -145,7 +146,7 @@ export default function App() {
             <ShieldAlert className="mt-0.5 shrink-0" size={20} />
             <div className="text-sm">
               <p className="text-base font-semibold">
-                Statement failed the integrity check — no score will be issued
+                Statement failed the integrity check, no score will be issued
               </p>
               {report.brokenRows.length > 0 && (
                 <p className="mt-2">
@@ -184,6 +185,8 @@ export default function App() {
             </p>
           </div>
         )}
+
+        {txns && report?.valid && <Results txns={txns} sourceName={sourceName} />}
       </main>
     </div>
   );
