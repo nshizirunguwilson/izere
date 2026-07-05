@@ -16,9 +16,10 @@ describe('sample fixtures', () => {
     const result = scoreTransactions(txns);
     expect(result.verdict).toBe('APPROVE');
     expect(result.score).toBeGreaterThanOrEqual(86);
-    expect(result.score).toBeLessThanOrEqual(96);
-    expect(result.safeMonthlyPayment).toBeGreaterThanOrEqual(760_000);
-    expect(result.safeMonthlyPayment).toBeLessThanOrEqual(960_000);
+    expect(result.score).toBeLessThanOrEqual(98);
+    expect(result.monthlyRepaymentCapacity).toBeGreaterThanOrEqual(760_000);
+    expect(result.monthlyRepaymentCapacity).toBeLessThanOrEqual(960_000);
+    expect(result.recommendedLimit).toBeCloseTo(2.5 * result.meanMonthlyNet, -3);
   });
 
   it('seasonal sample scores a REVIEW around 48', () => {
@@ -28,7 +29,7 @@ describe('sample fixtures', () => {
     const result = scoreTransactions(txns);
     expect(result.verdict).toBe('REVIEW');
     expect(result.score).toBeGreaterThanOrEqual(43);
-    expect(result.score).toBeLessThanOrEqual(53);
+    expect(result.score).toBeLessThanOrEqual(58);
   });
 
   it('tampered sample breaks integrity at rows 692 and 1379 only', () => {

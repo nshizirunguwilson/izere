@@ -3,15 +3,23 @@ import { FileUp, Landmark, Loader2, ShieldAlert, ShieldCheck } from 'lucide-reac
 import { parseCsv, ParseError } from './lib/parse';
 import { checkIntegrity } from './lib/integrity';
 import type { IntegrityReport, Transaction } from './lib/types';
+import IntegrityTable from './components/IntegrityTable';
 import Results from './components/Results';
+import { useLang, type Lang } from './i18n';
 
 const SAMPLES = [
-  { label: 'Healthy retail shop', file: 'sample_healthy.csv' },
-  { label: 'Seasonal trader', file: 'sample_seasonal.csv' },
-  { label: 'Tampered statement', file: 'sample_tampered.csv' },
+  { key: 'healthy', file: 'sample_healthy.csv' },
+  { key: 'seasonal', file: 'sample_seasonal.csv' },
+  { key: 'tampered', file: 'sample_tampered.csv' },
+] as const;
+
+const LANGS: { code: Lang; label: string }[] = [
+  { code: 'rw', label: 'RW' },
+  { code: 'en', label: 'EN' },
 ];
 
 export default function App() {
+  const { lang, t, setLang } = useLang();
   const [csvText, setCsvText] = useState<string | null>(null);
   const [sourceName, setSourceName] = useState<string>('');
   const [loading, setLoading] = useState(false);
@@ -69,9 +77,22 @@ export default function App() {
           </div>
           <div>
             <h1 className="text-lg font-bold tracking-tight">Izere</h1>
-            <p className="text-xs text-slate-500">
-              Mobile Money history → lender-ready credit decision
-            </p>
+            <p className="text-xs text-slate-500">{t.tagline}</p>
+          </div>
+          <div className="ml-auto flex gap-0.5 rounded-lg border border-slate-200 p-0.5 print:hidden">
+            {LANGS.map(({ code, label }) => (
+              <button
+                key={code}
+                onClick={() => setLang(code)}
+                className={`rounded-md px-2.5 py-1 text-xs font-bold transition-colors ${
+                  lang === code
+                    ? 'bg-emerald-700 text-white'
+                    : 'text-slate-500 hover:text-emerald-700'
+                }`}
+              >
+                {label}
+              </button>
+            ))}
           </div>
         </div>
       </header>
@@ -94,15 +115,13 @@ export default function App() {
           }}
         >
           <FileUp className="mx-auto mb-3 text-slate-400" size={32} />
-          <p className="font-semibold">Drop a MoMo statement CSV here</p>
-          <p className="mt-1 text-sm text-slate-500">
-            date, txn_id, type, counterparty, amount, fee, balance
-          </p>
+          <p className="font-semibold">{t.upload.drop}</p>
+          <p className="mt-1 text-sm text-slate-500">{t.upload.columns}</p>
           <button
             className="mt-4 rounded-lg bg-emerald-700 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-800"
             onClick={() => inputRef.current?.click()}
           >
-            Choose file
+            {t.upload.choose}
           </button>
           <input
             ref={inputRef}
@@ -118,14 +137,14 @@ export default function App() {
         </section>
 
         <div className="mt-6 flex flex-wrap items-center gap-3 print:hidden">
-          <span className="text-sm font-medium text-slate-500">Or load a sample:</span>
+          <span className="text-sm font-medium text-slate-500">{t.upload.orSample}</span>
           {SAMPLES.map((s) => (
             <button
               key={s.file}
               className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium hover:border-emerald-600 hover:text-emerald-700"
               onClick={() => loadSample(s.file)}
             >
-              {s.label}
+              {t.upload.samples[s.key]}
             </button>
           ))}
           {loading && <Loader2 className="animate-spin text-slate-400" size={16} />}
@@ -135,7 +154,7 @@ export default function App() {
           <div className="mt-8 flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 p-4 text-red-900">
             <ShieldAlert className="mt-0.5 shrink-0" size={20} />
             <div>
-              <p className="font-semibold">Could not read {sourceName}</p>
+              <p className="font-semibold">{t.parseErrorTitle(sourceName)}</p>
               <p className="mt-1 text-sm">{parseError}</p>
             </div>
           </div>
@@ -145,33 +164,30 @@ export default function App() {
           <div className="mt-8 flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 p-4 text-red-900">
             <ShieldAlert className="mt-0.5 shrink-0" size={20} />
             <div className="text-sm">
-              <p className="text-base font-semibold">
-                Statement failed the integrity check, no score will be issued
-              </p>
+              <p className="text-base font-semibold">{t.integrity.failTitle}</p>
               {report.brokenRows.length > 0 && (
                 <p className="mt-2">
-                  Balance chain breaks at row{report.brokenRows.length > 1 ? 's' : ''}{' '}
-                  <span className="font-semibold">{report.brokenRows.join(', ')}</span>: the
-                  recorded balance does not match the previous balance plus this transaction.
+                  {t.integrity.brokenRows(
+                    report.brokenRows.join(', '),
+                    report.brokenRows.length > 1,
+                  )}
                 </p>
               )}
               {report.duplicateIds.length > 0 && (
-                <p className="mt-2">
-                  Duplicate transaction IDs:{' '}
-                  <span className="font-semibold">{report.duplicateIds.join(', ')}</span>
-                </p>
+                <p className="mt-2">{t.integrity.duplicates(report.duplicateIds.join(', '))}</p>
               )}
               {report.outOfOrderRows.length > 0 && (
                 <p className="mt-2">
-                  Transactions out of chronological order at row
-                  {report.outOfOrderRows.length > 1 ? 's' : ''}{' '}
-                  <span className="font-semibold">{report.outOfOrderRows.join(', ')}</span>
+                  {t.integrity.outOfOrder(
+                    report.outOfOrderRows.join(', '),
+                    report.outOfOrderRows.length > 1,
+                  )}
                 </p>
               )}
-              <p className="mt-2 text-red-700">
-                This statement appears edited or incomplete. Ask the business for a fresh export
-                before assessing.
-              </p>
+              <p className="mt-2 text-red-700">{t.integrity.advice}</p>
+              {txns && report.brokenRows.length > 0 && (
+                <IntegrityTable txns={txns} report={report} />
+              )}
             </div>
           </div>
         )}
@@ -179,10 +195,7 @@ export default function App() {
         {txns && report?.valid && (
           <div className="mt-8 flex items-center gap-3 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-emerald-900">
             <ShieldCheck size={20} />
-            <p className="text-sm">
-              <span className="font-semibold">{sourceName}</span> verified: {txns.length}{' '}
-              transactions, balance chain intact, no duplicates, dates in order.
-            </p>
+            <p className="text-sm">{t.integrity.verified(sourceName, txns.length)}</p>
           </div>
         )}
 
