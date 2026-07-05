@@ -1,5 +1,8 @@
-import { useCallback, useRef, useState } from 'react';
-import { FileUp, Landmark, Loader2 } from 'lucide-react';
+import { useCallback, useMemo, useRef, useState } from 'react';
+import { FileUp, Landmark, Loader2, ShieldAlert, ShieldCheck } from 'lucide-react';
+import { parseCsv, ParseError } from './lib/parse';
+import { checkIntegrity } from './lib/integrity';
+import type { IntegrityReport, Transaction } from './lib/types';
 
 const SAMPLES = [
   { label: 'Healthy retail shop', file: 'sample_healthy.csv' },
@@ -13,6 +16,23 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [dragOver, setDragOver] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const { txns, report, parseError } = useMemo<{
+    txns: Transaction[] | null;
+    report: IntegrityReport | null;
+    parseError: string | null;
+  }>(() => {
+    if (!csvText) return { txns: null, report: null, parseError: null };
+    try {
+      const parsed = parseCsv(csvText);
+      return { txns: parsed, report: checkIntegrity(parsed), parseError: null };
+    } catch (err) {
+      if (err instanceof ParseError) {
+        return { txns: null, report: null, parseError: err.message };
+      }
+      throw err;
+    }
+  }, [csvText]);
 
   const loadText = useCallback((text: string, name: string) => {
     setCsvText(text);
@@ -110,11 +130,59 @@ export default function App() {
           {loading && <Loader2 className="animate-spin text-slate-400" size={16} />}
         </div>
 
-        {csvText && (
-          <p className="mt-8 text-sm text-slate-600">
-            Loaded <span className="font-semibold">{sourceName}</span> (
-            {csvText.trim().split('\n').length - 1} transactions)
-          </p>
+        {parseError && (
+          <div className="mt-8 flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 p-4 text-red-900">
+            <ShieldAlert className="mt-0.5 shrink-0" size={20} />
+            <div>
+              <p className="font-semibold">Could not read {sourceName}</p>
+              <p className="mt-1 text-sm">{parseError}</p>
+            </div>
+          </div>
+        )}
+
+        {report && !report.valid && (
+          <div className="mt-8 flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 p-4 text-red-900">
+            <ShieldAlert className="mt-0.5 shrink-0" size={20} />
+            <div className="text-sm">
+              <p className="text-base font-semibold">
+                Statement failed the integrity check — no score will be issued
+              </p>
+              {report.brokenRows.length > 0 && (
+                <p className="mt-2">
+                  Balance chain breaks at row{report.brokenRows.length > 1 ? 's' : ''}{' '}
+                  <span className="font-semibold">{report.brokenRows.join(', ')}</span>: the
+                  recorded balance does not match the previous balance plus this transaction.
+                </p>
+              )}
+              {report.duplicateIds.length > 0 && (
+                <p className="mt-2">
+                  Duplicate transaction IDs:{' '}
+                  <span className="font-semibold">{report.duplicateIds.join(', ')}</span>
+                </p>
+              )}
+              {report.outOfOrderRows.length > 0 && (
+                <p className="mt-2">
+                  Transactions out of chronological order at row
+                  {report.outOfOrderRows.length > 1 ? 's' : ''}{' '}
+                  <span className="font-semibold">{report.outOfOrderRows.join(', ')}</span>
+                </p>
+              )}
+              <p className="mt-2 text-red-700">
+                This statement appears edited or incomplete. Ask the business for a fresh export
+                before assessing.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {txns && report?.valid && (
+          <div className="mt-8 flex items-center gap-3 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-emerald-900">
+            <ShieldCheck size={20} />
+            <p className="text-sm">
+              <span className="font-semibold">{sourceName}</span> verified: {txns.length}{' '}
+              transactions, balance chain intact, no duplicates, dates in order.
+            </p>
+          </div>
         )}
       </main>
     </div>
