@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { assessLoan, scoreTransactions } from '../lib/engine';
 import type { LoanAssessment, Transaction } from '../lib/types';
 import { useLang } from '../i18n';
+import { HelpTip, TipHeading } from './HelpTip';
 
 const LOAN_CHIP: Record<LoanAssessment['verdict'], string> = {
   MATCH: 'bg-emerald-100 text-emerald-800',
@@ -28,12 +29,15 @@ export default function LoanView({ txns }: { txns: Transaction[] }) {
 
   return (
     <section className="max-w-2xl rounded-xl border border-slate-200/80 bg-white p-6">
-      <h3 className="font-bold">{t.loan.title}</h3>
+      <TipHeading tip={t.tips.loanRequest}>{t.loan.title}</TipHeading>
       <p className="mt-1 text-sm text-slate-500">{t.loan.subtitle}</p>
 
       <div className="mt-5 flex flex-wrap gap-4">
         <label className="text-sm">
-          <span className="mb-1.5 block font-medium text-slate-600">{t.loan.amount}</span>
+          <span className="mb-1.5 inline-flex items-center gap-1 font-medium text-slate-600">
+            {t.loan.amount}
+            <HelpTip tip={t.tips.loanAmount} />
+          </span>
           <input
             type="number"
             min="1"
@@ -49,7 +53,10 @@ export default function LoanView({ txns }: { txns: Transaction[] }) {
           {!amountValid && <p className="mt-1.5 w-48 text-xs text-red-600">{t.loan.invalidAmount}</p>}
         </label>
         <label className="text-sm">
-          <span className="mb-1.5 block font-medium text-slate-600">{t.loan.term}</span>
+          <span className="mb-1.5 inline-flex items-center gap-1 font-medium text-slate-600">
+            {t.loan.term}
+            <HelpTip tip={t.tips.loanTerm} />
+          </span>
           <input
             type="number"
             min="1"
@@ -71,9 +78,10 @@ export default function LoanView({ txns }: { txns: Transaction[] }) {
         <div className="mt-6 rounded-lg bg-slate-50 p-4">
           <div className="flex flex-wrap items-center gap-3">
             <span
-              className={`rounded-full px-3.5 py-1 text-sm font-bold ${LOAN_CHIP[assessment.verdict]}`}
+              className={`inline-flex items-center gap-1 rounded-full px-3.5 py-1 text-sm font-bold ${LOAN_CHIP[assessment.verdict]}`}
             >
               {t.loan.verdicts[assessment.verdict]}
+              <HelpTip tip={t.tips.loanVerdict} />
             </span>
             <span className="text-sm text-slate-600">
               {t.loan.summary(

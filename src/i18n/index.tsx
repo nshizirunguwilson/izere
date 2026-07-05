@@ -3,7 +3,7 @@ import { en, type Dict } from './en';
 import { rw } from './rw';
 
 export type Lang = 'en' | 'rw';
-export type { Dict };
+export type { Dict, TipContent, TipKey } from './en';
 
 const DICTS: Record<Lang, Dict> = { en, rw };
 const STORAGE_KEY = 'izere-lang';

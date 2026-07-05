@@ -8,8 +8,17 @@ import {
 } from '../lib/engine';
 import { SCORE_WEIGHTS, type ScoreResult, type ScoreSubKey, type Transaction } from '../lib/types';
 import { formatMonth, useLang } from '../i18n';
+import { HelpTip, TipHeading, TipMetricLabel } from './HelpTip';
 
 const fmt = (n: number) => `RWF ${Math.round(n).toLocaleString('en-US')}`;
+
+const SUB_TIP_KEYS: Record<ScoreSubKey, 'subInflow' | 'subRegularity' | 'subBalanceFloor' | 'subVolatility' | 'subExpenseRatio'> = {
+  inflow: 'subInflow',
+  regularity: 'subRegularity',
+  balanceFloor: 'subBalanceFloor',
+  volatility: 'subVolatility',
+  expenseRatio: 'subExpenseRatio',
+};
 
 export const VERDICT_STYLE: Record<ScoreResult['verdict'], { chip: string; bar: string }> = {
   APPROVE: { chip: 'bg-emerald-100 text-emerald-800', bar: 'bg-emerald-600' },
@@ -30,14 +39,16 @@ function SubScores({ subs }: { subs: ScoreResult['subs'] }) {
   const { t } = useLang();
   return (
     <div className="space-y-3">
+      <TipHeading tip={t.tips.scoreBreakdown}>{t.dashboard.scoreBreakdown}</TipHeading>
       {(Object.keys(SCORE_WEIGHTS) as ScoreSubKey[]).map((key) => (
         <div key={key} className="text-sm">
           <div className="mb-1 flex items-baseline justify-between">
-            <span className="text-slate-600">
+            <span className="inline-flex items-center gap-1 text-slate-600">
               {t.subs[key]}{' '}
               <span className="text-xs text-slate-400">
                 ({Math.round(SCORE_WEIGHTS[key] * 100)}%)
               </span>
+              <HelpTip tip={t.tips[SUB_TIP_KEYS[key]]} />
             </span>
             <span className="font-semibold tabular-nums">{Math.round(subs[key])}</span>
           </div>
@@ -75,7 +86,10 @@ export default function DashboardView({ txns }: { txns: Transaction[] }) {
         <div className="flex items-center gap-3">
           <CircleHelp className="text-slate-400" size={28} />
           <div>
-            <h2 className="text-lg font-bold">{t.results.notScoreable}</h2>
+            <h2 className="inline-flex items-center gap-2 text-lg font-bold">
+              {t.results.notScoreable}
+              <HelpTip tip={t.tips.notScoreable} />
+            </h2>
             <p className="text-sm text-slate-500">{t.results.notScoreableSub}</p>
           </div>
         </div>
@@ -93,22 +107,20 @@ export default function DashboardView({ txns }: { txns: Transaction[] }) {
 
   return (
     <div className="space-y-4">
-      {/* Decision strip: the one thing to read */}
       <section className="overflow-hidden rounded-xl border border-slate-200/80 bg-white">
         <div className={`h-1.5 ${VERDICT_STYLE[display.verdict].bar}`} />
         <div className="flex flex-wrap items-center gap-x-10 gap-y-4 p-6">
           <div>
-            <p className="text-xs font-semibold tracking-wide text-slate-500 uppercase">
-              {t.dashboard.scoreLabel}
-            </p>
+            <TipMetricLabel label={t.dashboard.scoreLabel} tip={t.tips.creditScore} />
             <div className="mt-1 flex items-center gap-3">
               <span className="text-4xl font-extrabold tracking-tight tabular-nums">
                 {display.score}
               </span>
               <span
-                className={`rounded-full px-3 py-1 text-sm font-bold ${VERDICT_STYLE[display.verdict].chip}`}
+                className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-sm font-bold ${VERDICT_STYLE[display.verdict].chip}`}
               >
                 {t.verdict[display.verdict]}
+                <HelpTip tip={t.tips.verdict} />
               </span>
             </div>
             {stressedScore && stressedScore.verdict !== score.verdict && (
@@ -119,9 +131,7 @@ export default function DashboardView({ txns }: { txns: Transaction[] }) {
           </div>
           <div className="h-12 w-px bg-slate-100 max-sm:hidden" />
           <div>
-            <p className="text-xs font-semibold tracking-wide text-slate-500 uppercase">
-              {t.results.recommendedLimit}
-            </p>
+            <TipMetricLabel label={t.results.recommendedLimit} tip={t.tips.recommendedLimit} />
             <p className="mt-1 text-4xl font-extrabold tracking-tight tabular-nums">
               {fmt(display.recommendedLimit)}
             </p>
@@ -131,14 +141,13 @@ export default function DashboardView({ txns }: { txns: Transaction[] }) {
           </div>
           <div className="h-12 w-px bg-slate-100 max-sm:hidden" />
           <div>
-            <p className="text-xs font-semibold tracking-wide text-slate-500 uppercase">
-              {t.stress.capacity}
-            </p>
+            <TipMetricLabel label={t.stress.capacity} tip={t.tips.repaymentCapacity} />
             <p className="mt-1 text-4xl font-extrabold tracking-tight tabular-nums">
               {fmt(display.monthlyRepaymentCapacity)}
             </p>
             <p className="mt-1 inline-flex items-center gap-1 text-xs text-emerald-700">
               <Shield size={12} /> {t.results.responsible}
+              <HelpTip tip={t.tips.responsibleLending} />
             </p>
           </div>
         </div>
@@ -146,7 +155,7 @@ export default function DashboardView({ txns }: { txns: Transaction[] }) {
 
       <div className="grid gap-4 lg:grid-cols-2">
         <Card>
-          <h3 className="font-bold">{t.dashboard.whyTitle}</h3>
+          <TipHeading tip={t.tips.whyDecision}>{t.dashboard.whyTitle}</TipHeading>
           <ul className="mt-4 space-y-3 text-sm leading-relaxed text-slate-700">
             {display.reasons.map((reason) => (
               <li key={reason.key} className="flex gap-2.5">
@@ -163,7 +172,7 @@ export default function DashboardView({ txns }: { txns: Transaction[] }) {
 
       <div className="grid gap-4 lg:grid-cols-[1.5fr_1fr]">
         <Card>
-          <h3 className="font-bold">{t.dashboard.cashflow}</h3>
+          <TipHeading tip={t.tips.cashflowChart}>{t.dashboard.cashflow}</TipHeading>
           <div className="mt-6 flex h-36 items-end gap-3">
             {months.map((m) => {
               const inflow = stressPct > 0 ? m.revenue * (1 - stressPct / 100) : m.revenue;
@@ -187,6 +196,7 @@ export default function DashboardView({ txns }: { txns: Transaction[] }) {
         <Card>
           <h3 className="flex items-center gap-2 font-bold">
             <Users size={16} className="text-emerald-700" /> {t.customers.title}
+            <HelpTip tip={t.tips.topCustomers} />
           </h3>
           <ul className="mt-4 space-y-3">
             {customers.map((c, i) => (
@@ -210,6 +220,7 @@ export default function DashboardView({ txns }: { txns: Transaction[] }) {
           <div>
             <h3 className="flex items-center gap-2 font-bold">
               <TrendingDown size={16} className="text-emerald-700" /> {t.stress.title}
+              <HelpTip tip={t.tips.stressTest} />
             </h3>
             <p className="mt-1 text-sm text-slate-500">{t.stress.subtitle}</p>
           </div>
@@ -226,6 +237,7 @@ export default function DashboardView({ txns }: { txns: Transaction[] }) {
               value={stressPct}
               onChange={(e) => setStressPct(Number(e.target.value))}
               className="w-full accent-emerald-700"
+              aria-label={t.stress.shock}
             />
           </div>
         </div>

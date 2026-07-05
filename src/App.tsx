@@ -18,13 +18,14 @@ import IntegrityTable from './components/IntegrityTable';
 import DashboardView from './components/DashboardView';
 import MonthlyView from './components/MonthlyView';
 import LoanView from './components/LoanView';
-import { useLang, type Lang } from './i18n';
+import { HelpTip } from './components/HelpTip';
+import { useLang, type Lang, type TipKey } from './i18n';
 
 const SAMPLES = [
-  { key: 'healthy', file: 'sample_healthy.csv' },
-  { key: 'seasonal', file: 'sample_seasonal.csv' },
-  { key: 'tampered', file: 'sample_tampered.csv' },
-] as const;
+  { key: 'healthy' as const, file: 'sample_healthy.csv', tipKey: 'sampleHealthy' as const },
+  { key: 'seasonal' as const, file: 'sample_seasonal.csv', tipKey: 'sampleSeasonal' as const },
+  { key: 'tampered' as const, file: 'sample_tampered.csv', tipKey: 'sampleTampered' as const },
+];
 
 const LANGS: { code: Lang; label: string }[] = [
   { code: 'rw', label: 'RW' },
@@ -86,8 +87,14 @@ function UploadZone({
         }}
       >
         <FileUp className="mx-auto mb-3 text-slate-400" size={compact ? 24 : 32} />
-        <p className="font-semibold">{t.upload.drop}</p>
-        <p className="mt-1 text-sm text-slate-500">{t.upload.columns}</p>
+        <p className="inline-flex items-center justify-center gap-1.5 font-semibold">
+          {t.upload.drop}
+          <HelpTip tip={t.tips.upload} />
+        </p>
+        <p className="mt-1 inline-flex items-center justify-center gap-1.5 text-sm text-slate-500">
+          {t.upload.columns}
+          <HelpTip tip={t.tips.uploadColumns} />
+        </p>
         <button
           className="mt-4 rounded-lg bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white hover:bg-emerald-800"
           onClick={() => inputRef.current?.click()}
@@ -110,13 +117,15 @@ function UploadZone({
       <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
         <span className="text-sm font-medium text-slate-500">{t.upload.orSample}</span>
         {SAMPLES.map((s) => (
-          <button
-            key={s.file}
-            className="rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium hover:border-emerald-600 hover:text-emerald-700"
-            onClick={() => onSample(s.file)}
-          >
-            {t.upload.samples[s.key]}
-          </button>
+          <span key={s.file} className="inline-flex items-center gap-1">
+            <button
+              className="rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium hover:border-emerald-600 hover:text-emerald-700"
+              onClick={() => onSample(s.file)}
+            >
+              {t.upload.samples[s.key]}
+            </button>
+            <HelpTip tip={t.tips[s.tipKey]} />
+          </span>
         ))}
         {loading && <Loader2 className="animate-spin text-slate-400" size={16} />}
       </div>
@@ -182,10 +191,10 @@ export default function App() {
 
   const hasData = Boolean(txns && report?.valid);
 
-  const NAV: { key: View; label: string; icon: typeof LayoutGrid }[] = [
-    { key: 'dashboard', label: t.nav.dashboard, icon: LayoutGrid },
-    { key: 'monthly', label: t.nav.monthly, icon: CalendarDays },
-    { key: 'loan', label: t.nav.loan, icon: Scale },
+  const NAV: { key: View; label: string; icon: typeof LayoutGrid; tipKey: TipKey }[] = [
+    { key: 'dashboard', label: t.nav.dashboard, icon: LayoutGrid, tipKey: 'navDashboard' },
+    { key: 'monthly', label: t.nav.monthly, icon: CalendarDays, tipKey: 'navMonthly' },
+    { key: 'loan', label: t.nav.loan, icon: Scale, tipKey: 'navLoan' },
   ];
 
   // Landing: nothing loaded yet, or the file could not be used.
@@ -198,10 +207,14 @@ export default function App() {
               <Landmark size={18} />
             </div>
             <div>
-              <h1 className="text-lg font-bold tracking-tight">Izere</h1>
+              <h1 className="inline-flex items-center gap-2 text-lg font-bold tracking-tight">
+                Izere
+                <HelpTip tip={t.tips.app} />
+              </h1>
               <p className="text-xs text-slate-500">{t.tagline}</p>
             </div>
-            <div className="ml-auto">
+            <div className="ml-auto flex items-center gap-1">
+              <HelpTip tip={t.tips.langToggle} />
               <LangToggle />
             </div>
           </div>
@@ -214,7 +227,10 @@ export default function App() {
             <div className="mt-8 flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 p-4 text-red-900">
               <ShieldAlert className="mt-0.5 shrink-0" size={20} />
               <div>
-                <p className="font-semibold">{t.parseErrorTitle(sourceName)}</p>
+                <p className="inline-flex items-center gap-1.5 font-semibold">
+                  {t.parseErrorTitle(sourceName)}
+                  <HelpTip tip={t.tips.parseError} />
+                </p>
                 <p className="mt-1 text-sm">{parseError}</p>
               </div>
             </div>
@@ -224,7 +240,10 @@ export default function App() {
             <div className="mt-8 flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 p-4 text-red-900">
               <ShieldAlert className="mt-0.5 shrink-0" size={20} />
               <div className="min-w-0 text-sm">
-                <p className="text-base font-semibold">{t.integrity.failTitle}</p>
+                <p className="inline-flex items-center gap-1.5 text-base font-semibold">
+                  {t.integrity.failTitle}
+                  <HelpTip tip={t.tips.integrityFail} />
+                </p>
                 {report.brokenRows.length > 0 && (
                   <p className="mt-2">
                     {t.integrity.brokenRows(
@@ -264,14 +283,17 @@ export default function App() {
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-700 text-white">
             <Landmark size={16} />
           </div>
-          <span className="text-lg font-bold tracking-tight">Izere</span>
+          <span className="inline-flex items-center gap-1.5 text-lg font-bold tracking-tight">
+            Izere
+            <HelpTip tip={t.tips.app} />
+          </span>
         </div>
         <nav className="flex-1 px-3">
           <p className="px-2 pb-2 text-[11px] font-semibold tracking-wider text-slate-400 uppercase">
             {t.nav.menu}
           </p>
           <ul className="space-y-1">
-            {NAV.map(({ key, label, icon: Icon }) => (
+            {NAV.map(({ key, label, icon: Icon, tipKey }) => (
               <li key={key}>
                 <button
                   onClick={() => setView(key)}
@@ -282,7 +304,10 @@ export default function App() {
                   }`}
                 >
                   <Icon size={16} />
-                  {label}
+                  <span className="flex-1 text-left">{label}</span>
+                  <span className={view === key ? 'text-emerald-200' : ''}>
+                    <HelpTip tip={t.tips[tipKey]} />
+                  </span>
                 </button>
               </li>
             ))}
@@ -294,7 +319,8 @@ export default function App() {
             className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-100"
           >
             <Plus size={16} />
-            {t.shell.newStatement}
+            <span className="flex-1 text-left">{t.shell.newStatement}</span>
+            <HelpTip tip={t.tips.newStatement} />
           </button>
         </div>
       </aside>
@@ -305,11 +331,12 @@ export default function App() {
           <span className="hidden h-7 w-7 items-center justify-center rounded-md bg-emerald-700 text-white max-md:flex">
             <Landmark size={14} />
           </span>
-          <div className="flex min-w-0 items-center gap-2 text-sm">
+          <div className="flex min-w-0 flex-1 items-center gap-2 text-sm">
             <ShieldCheck size={16} className="shrink-0 text-emerald-600" />
             <span className="truncate text-slate-600">
               {t.integrity.verified(sourceName, txns!.length)}
             </span>
+            <HelpTip tip={t.tips.verified} />
           </div>
           <div className="ml-auto flex items-center gap-2">
             <button
@@ -318,7 +345,9 @@ export default function App() {
             >
               <Printer size={15} />
               <span className="max-sm:hidden">{t.shell.exportReport}</span>
+              <HelpTip tip={t.tips.exportReport} />
             </button>
+            <HelpTip tip={t.tips.langToggle} />
             <LangToggle />
           </div>
         </header>

@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { aggregateMonths } from '../lib/engine';
 import type { Transaction } from '../lib/types';
 import { formatMonth, useLang } from '../i18n';
+import { HelpTip, TipHeading } from './HelpTip';
 
 const fmt = (n: number) => `RWF ${Math.round(n).toLocaleString('en-US')}`;
 
@@ -11,16 +12,41 @@ export default function MonthlyView({ txns }: { txns: Transaction[] }) {
 
   return (
     <section className="rounded-xl border border-slate-200/80 bg-white p-5">
-      <h3 className="font-bold">{t.results.monthlySummary}</h3>
+      <TipHeading tip={t.tips.monthlySummary}>{t.results.monthlySummary}</TipHeading>
       <div className="mt-4 overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-slate-200 text-left text-xs tracking-wide text-slate-500 uppercase">
-              <th className="py-2.5 pr-4">{t.results.table.month}</th>
-              <th className="py-2.5 pr-4 text-right">{t.results.table.inflow}</th>
-              <th className="py-2.5 pr-4 text-right">{t.results.table.expenses}</th>
-              <th className="py-2.5 pr-4 text-right">{t.results.table.net}</th>
-              <th className="py-2.5 text-right">{t.results.table.sellingDays}</th>
+              <th className="py-2.5 pr-4">
+                <span className="inline-flex items-center gap-1">
+                  {t.results.table.month}
+                  <HelpTip tip={t.tips.colMonth} />
+                </span>
+              </th>
+              <th className="py-2.5 pr-4 text-right">
+                <span className="inline-flex items-center justify-end gap-1">
+                  {t.results.table.inflow}
+                  <HelpTip tip={t.tips.colInflow} />
+                </span>
+              </th>
+              <th className="py-2.5 pr-4 text-right">
+                <span className="inline-flex items-center justify-end gap-1">
+                  {t.results.table.expenses}
+                  <HelpTip tip={t.tips.colExpenses} />
+                </span>
+              </th>
+              <th className="py-2.5 pr-4 text-right">
+                <span className="inline-flex items-center justify-end gap-1">
+                  {t.results.table.net}
+                  <HelpTip tip={t.tips.colNet} />
+                </span>
+              </th>
+              <th className="py-2.5 text-right">
+                <span className="inline-flex items-center justify-end gap-1">
+                  {t.results.table.sellingDays}
+                  <HelpTip tip={t.tips.colSellingDays} />
+                </span>
+              </th>
             </tr>
           </thead>
           <tbody>

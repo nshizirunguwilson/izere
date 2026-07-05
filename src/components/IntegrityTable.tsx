@@ -2,6 +2,7 @@ import { Fragment, useMemo } from 'react';
 import { buildIntegrityAudit, integrityRowsForDisplay } from '../lib/integrity';
 import type { IntegrityReport, Transaction } from '../lib/types';
 import { useLang } from '../i18n';
+import { HelpTip } from './HelpTip';
 
 const fmt = (n: number) => `RWF ${Math.round(n).toLocaleString('en-US')}`;
 
@@ -21,7 +22,12 @@ export default function IntegrityTable({
   const brokenSet = useMemo(() => new Set(report.brokenRows), [report.brokenRows]);
 
   return (
-    <div className="mt-4 overflow-x-auto rounded-xl border border-red-200 bg-white">
+    <div className="mt-4">
+      <p className="mb-2 inline-flex items-center gap-1.5 text-sm font-medium text-red-900">
+        {t.integrity.table.auditTitle}
+        <HelpTip tip={t.tips.integrityTable} />
+      </p>
+      <div className="overflow-x-auto rounded-xl border border-red-200 bg-white">
       <table className="w-full text-sm">
         <thead>
           <tr className="border-b border-red-100 bg-red-50/80 text-left text-xs tracking-wide text-red-900 uppercase">
@@ -30,8 +36,18 @@ export default function IntegrityTable({
             <th className="px-3 py-2">{t.integrity.table.description}</th>
             <th className="px-3 py-2">{t.integrity.table.type}</th>
             <th className="px-3 py-2 text-right">{t.integrity.table.amount}</th>
-            <th className="px-3 py-2 text-right">{t.integrity.table.expected}</th>
-            <th className="px-3 py-2 text-right">{t.integrity.table.recorded}</th>
+            <th className="px-3 py-2 text-right">
+              <span className="inline-flex items-center justify-end gap-1">
+                {t.integrity.table.expected}
+                <HelpTip tip={t.tips.integrityExpected} />
+              </span>
+            </th>
+            <th className="px-3 py-2 text-right">
+              <span className="inline-flex items-center justify-end gap-1">
+                {t.integrity.table.recorded}
+                <HelpTip tip={t.tips.integrityRecorded} />
+              </span>
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -79,6 +95,7 @@ export default function IntegrityTable({
           })}
         </tbody>
       </table>
+      </div>
     </div>
   );
 }
