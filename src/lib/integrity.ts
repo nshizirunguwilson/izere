@@ -1,5 +1,9 @@
 import type { IntegrityReport, Transaction } from './types';
 
+// Calendar-day granularity: MoMo confirmations can arrive minutes out of order
+// within a day, so only a step back to an earlier day counts as out of order.
+const dayNumber = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
+
 // Row numbers are 1-indexed counting the header line, so data row i maps to row i + 2.
 export function checkIntegrity(txns: Transaction[]): IntegrityReport {
   const brokenRows: number[] = [];
@@ -14,7 +18,7 @@ export function checkIntegrity(txns: Transaction[]): IntegrityReport {
     if (Math.abs(expected - txn.balance) > 1) {
       brokenRows.push(i + 2);
     }
-    if (txn.date.getTime() < prev.date.getTime()) {
+    if (dayNumber(txn.date) < dayNumber(prev.date)) {
       outOfOrderRows.push(i + 2);
     }
   });
